@@ -1,0 +1,66 @@
+useEffect(() => {
+        const constraints = {
+            video: true,
+        };
+
+        navigator.mediaDevices.enumerateDevices()
+        .then(gotDevices)
+        .catch(console.log('some error in devices'));
+
+
+        startCamera();
+        
+    }, [])
+
+    function startCamera()
+    {
+        let eVideo = document.getElementById("videoSelect");
+        let videoId = eVideo.value;
+
+        let eAudioOut = document.getElementById("audioOutputSelect");
+        let audioOutId = eAudioOut.value;
+
+        let eAudioIn = document.getElementById("audioInputSelect");
+        let audioInId = eAudioIn.value;
+
+        const video = document.querySelector("#loginVideo");
+
+        const hdConstraints = {
+            audio: { deviceId: audioInId },
+            video: { width: { min: 1280 }, height: { min: 720 }, deviceId: videoId },
+        };
+        navigator.mediaDevices.getUserMedia(hdConstraints).then((stream) => {
+            video.srcObject = stream;
+        });
+
+       
+    }
+
+    function gotDevices(deviceInfos)
+    {
+
+        var audioInputSelect = document.getElementById("audioInputSelect");
+        var audioOutputSelect = document.getElementById("audioOutputSelect");
+        var videoSelect = document.getElementById("videoSelect");
+
+        for (var i = 0; i !== deviceInfos.length; ++i) {
+          var deviceInfo = deviceInfos[i];
+          var option = document.createElement('option');
+          option.value = deviceInfo.deviceId;
+          if (deviceInfo.kind === 'audioinput') {
+            option.text = deviceInfo.label ||
+              'Microphone ' + (audioInputSelect.length + 1);
+            audioInputSelect.appendChild(option);
+          } else if (deviceInfo.kind === 'audiooutput') {
+            option.text = deviceInfo.label || 'Speaker ' +
+              (audioOutputSelect.length + 1);
+            audioOutputSelect.appendChild(option);
+          } else if (deviceInfo.kind === 'videoinput') {
+            option.text = deviceInfo.label || 'Camera ' +
+              (videoSelect.length + 1);
+            videoSelect.appendChild(option);
+          }
+
+        }
+      
+    }
